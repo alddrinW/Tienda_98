@@ -1,5 +1,6 @@
+DROP DATABASE IF EXISTS tienda98;
 CREATE DATABASE tienda98;
-use tienda98;
+USE tienda98;
 
 CREATE TABLE categoria (
   idCategoria INT AUTO_INCREMENT PRIMARY KEY,
@@ -264,9 +265,9 @@ BEGIN
     UPDATE vendedor
     SET 
         suma_calificaciones   = suma_calificaciones + NEW.calificacion,
-        cantidad_reseñas      = cantidad_reseñas + 1,
-        calificacion_promedio = IF(cantidad_reseñas + 1 > 0, 
-                                   ROUND((suma_calificaciones + NEW.calificacion) / (cantidad_reseñas + 1), 2), 
+        cantidad_resenias     = cantidad_resenias + 1,
+        calificacion_promedio = IF(cantidad_resenias + 1 > 0, 
+                                   ROUND((suma_calificaciones + NEW.calificacion) / (cantidad_resenias + 1), 2), 
                                    0.00)
     WHERE idVendedor = NEW.idVendedor;
 END //
@@ -279,8 +280,8 @@ BEGIN
         UPDATE vendedor
         SET 
             suma_calificaciones   = suma_calificaciones - OLD.calificacion + NEW.calificacion,
-            calificacion_promedio = IF(cantidad_reseñas > 0, 
-                                       ROUND(suma_calificaciones / cantidad_reseñas, 2), 
+            calificacion_promedio = IF(cantidad_resenias > 0, 
+                                       ROUND(suma_calificaciones / cantidad_resenias, 2), 
                                        0.00)
         WHERE idVendedor = NEW.idVendedor;
     END IF;
@@ -293,9 +294,9 @@ BEGIN
     UPDATE vendedor
     SET 
         suma_calificaciones   = suma_calificaciones - OLD.calificacion,
-        cantidad_reseñas      = cantidad_reseñas - 1,
-        calificacion_promedio = IF(cantidad_reseñas - 1 > 0, 
-                                   ROUND((suma_calificaciones - OLD.calificacion) / (cantidad_reseñas - 1), 2), 
+        cantidad_resenias     = cantidad_resenias - 1,
+        calificacion_promedio = IF(cantidad_resenias - 1 > 0, 
+                                   ROUND((suma_calificaciones - OLD.calificacion) / (cantidad_resenias - 1), 2), 
                                    0.00)
     WHERE idVendedor = OLD.idVendedor;
 END //
