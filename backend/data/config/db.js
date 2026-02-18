@@ -22,8 +22,8 @@ export async function testConnection() {
         console.log('Conexión a la base de datos establecida correctamente.');
         return { success: true, message: 'Conexión a MySQL establecida' };
     } catch (error) {
-        console.error('No se pudo conectar a la base de datos:', error);
-        throw error;
+        console.error('No se pudo conectar a la base de datos:', error.message);
+        console.warn('⚠️ Asegúrate de que MySQL está ejecutándose y la base de datos existe.');
     }
 }
 

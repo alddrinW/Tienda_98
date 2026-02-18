@@ -1,5 +1,6 @@
 // models/index.js
 import { sequelize } from '../config/db.js';
+import { DataTypes } from 'sequelize';
 
 import { defineCategoria } from './Categoria.js';
 import { defineProvincia } from './Provincia.js';
@@ -16,18 +17,18 @@ import { defineCarritoItem } from './CarritoItem.js';
 
 // Definir todos los modelos
 const models = {
-    Categoria: defineCategoria(sequelize),
-    Provincia: defineProvincia(sequelize),
-    Ciudad: defineCiudad(sequelize),
-    Usuario: defineUsuario(sequelize),
-    Vendedor: defineVendedor(sequelize),
-    Direccion: defineDireccion(sequelize),
-    Tienda: defineTienda(sequelize),
-    Producto: defineProducto(sequelize),
-    Resenia: defineResenia(sequelize),
-    ReseniaVendedor: defineReseniaVendedor(sequelize),
-    Carrito: defineCarrito(sequelize),
-    CarritoItem: defineCarritoItem(sequelize),
+    Categoria: defineCategoria(sequelize, DataTypes),
+    Provincia: defineProvincia(sequelize, DataTypes),
+    Ciudad: defineCiudad(sequelize, DataTypes),
+    Usuario: defineUsuario(sequelize, DataTypes),
+    Vendedor: defineVendedor(sequelize, DataTypes),
+    Direccion: defineDireccion(sequelize, DataTypes),
+    Tienda: defineTienda(sequelize, DataTypes),
+    Producto: defineProducto(sequelize, DataTypes),
+    Resenia: defineResenia(sequelize, DataTypes),
+    ReseniaVendedor: defineReseniaVendedor(sequelize, DataTypes),
+    Carrito: defineCarrito(sequelize, DataTypes),
+    CarritoItem: defineCarritoItem(sequelize, DataTypes),
 };
 
 // Asociaciones
