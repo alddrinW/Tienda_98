@@ -28,7 +28,7 @@ export const defineCategoria = (sequelize, DataTypes) => {
             as: 'Padre',
             foreignKey: 'idSubCategoria'
         });
-        Categoria.hasMany(models.Tienda, { foreignKey: 'idCategoria' });
+
         Categoria.hasMany(models.Producto, { foreignKey: 'idCategoria' });
     };
 

@@ -1,27 +1,69 @@
 import express from 'express';
-import cors from 'cors';
 import dotenv from 'dotenv';
-import { testConnection } from './data/config/db.js';
+import { sequelize } from './data/config/db.js';
+import colors from 'colors';
+import { errorHandler, notFoundHandler } from './middlewares/error.middleware.js';
+import { corsOptions, cors, helmet, apiLimiter } from './middlewares/security.middleware.js';
+import morgan from 'morgan';
 
-import tiendaRoutes from './routes/tienda.routes.js';
-
+// Load env vars
 dotenv.config();
+
+// Initialize App
 const app = express();
-app.use(cors());
-app.use(express.json());
 
-const PORT = process.env.PORT || 3000;
+// Security Middlewares
+app.use(helmet());
+app.use(cors(corsOptions));
+app.use(express.json()); // Body parser
+app.use(express.urlencoded({ extended: true }));
 
-app.use('/api/tiendas', tiendaRoutes);
+// Logging (Dev only)
+if (process.env.NODE_ENV === 'development') {
+    app.use(morgan('dev'));
+}
 
-app.get('/api/health', (req, res) => {
-    res.send('Servidor funcionando correctamente');
-})
+// Global Rate Limiting
+app.use('/api', apiLimiter);
 
-//probar conexion bd
+// Routes
+import authRoutes from './routes/auth.routes.js';
+import productRoutes from './routes/producto.routes.js';
+import locationRoutes from './routes/ubicacion.routes.js';
+import orderRoutes from './routes/orden.routes.js';
 
-testConnection();
+app.use('/api/auth', authRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/locations', locationRoutes);
+app.use('/api/orders', orderRoutes);
 
-app.listen(PORT, () => {
-    console.log(`Servidor corriendo en el puerto ${PORT}`);
+// Base Route
+app.get('/', (req, res) => {
+    res.send('API Tienda 98 is running...');
 });
+
+// Error Handling (Must be last)
+app.use(notFoundHandler);
+app.use(errorHandler);
+
+const PORT = process.env.PORT || 5000;
+
+// Database Connection & Server Start
+const startServer = async () => {
+    try {
+        await sequelize.authenticate();
+        console.log('Database connected successfully'.green.inverse);
+        
+        // Sync models (Careful with force: true in production!)
+        // await sequelize.sync({ alter: true }); 
+
+        app.listen(PORT, () => {
+            console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`.yellow.bold);
+        });
+    } catch (error) {
+        console.error(`Error: ${error.message}`.red.underline.bold);
+        process.exit(1);
+    }
+};
+
+startServer();

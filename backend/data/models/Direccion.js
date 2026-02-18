@@ -41,7 +41,6 @@ export const defineDireccion = (sequelize, DataTypes) => {
 
     Direccion.associate = (models) => {
         Direccion.belongsTo(models.Ciudad, { foreignKey: 'idCiudad' });
-        Direccion.hasOne(models.Tienda, { foreignKey: 'idDireccion', onDelete: 'RESTRICT' });
     };
 
     return Direccion;
