@@ -20,6 +20,8 @@ import {
 import Link from "next/link"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { WhatsAppService } from "@/lib/services/whatsapp"
+import { OrderService } from "@/lib/services/order"
 
 export default function CheckoutPage() {
   const { items, total, itemCount, clearCart } = useCart()
@@ -73,9 +75,59 @@ export default function CheckoutPage() {
     payment.method === "transfer" ||
     (payment.cardNumber && payment.cardName && payment.expiry && payment.cvv)
 
-  const handlePlaceOrder = () => {
-    setOrderPlaced(true)
-    clearCart()
+  const handlePlaceOrder = async () => {
+    // 1. Prepare Order Data
+    const orderData = {
+      userInfo: {
+        nombre: `${shipping.firstName} ${shipping.lastName}`,
+        email: shipping.email,
+        telefono: shipping.phone
+      },
+      shippingInfo: {
+        direccion: shipping.address,
+        ciudad: shipping.city,
+        referencia: shipping.notes
+      },
+      cartItems: items.map(item => ({
+        productId: item.id,
+        variantId: undefined, // TODO: map if available
+        quantity: item.quantity
+      })),
+      totals: {
+        subtotal: total,
+        discount: 0, // TODO: Implement if coupon logic exists
+        shipping: shippingCost,
+        total: grandTotal
+      },
+      paymentMethod: payment.method
+    }
+
+    try {
+      // 2. Create Order in Backend (Optional/Async)
+      await OrderService.createOrder(orderData)
+
+      // 3. Generate WhatsApp Message
+      const message = WhatsAppService.generateMessage({
+        customerName: `${shipping.firstName} ${shipping.lastName}`,
+        items: items,
+        total: grandTotal + (payment.method === "cash" ? 1.99 : 0),
+        shippingAddress: `${shipping.address}, ${shipping.city}`,
+        paymentMethod: payment.method === 'cash' ? 'Pago Contra Entrega' : 
+                       payment.method === 'transfer' ? 'Transferencia Bancaria' : 'Tarjeta'
+      })
+
+      // 4. Redirect to WhatsApp
+      // TODO: Replace with actual store phone number from config
+      const STORE_PHONE = "593999999999" 
+      WhatsAppService.redirectToWhatsApp(STORE_PHONE, message)
+
+      // 5. Cleanup
+      setOrderPlaced(true)
+      clearCart()
+    } catch (error) {
+      console.error("Error placing order:", error)
+      // TODO: Show error toast
+    }
   }
 
   if (items.length === 0 && !orderPlaced) {
