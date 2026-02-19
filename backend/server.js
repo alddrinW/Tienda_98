@@ -31,11 +31,23 @@ import authRoutes from './routes/auth.routes.js';
 import productRoutes from './routes/producto.routes.js';
 import locationRoutes from './routes/ubicacion.routes.js';
 import orderRoutes from './routes/orden.routes.js';
+import cartRoutes from './routes/carrito.routes.js';
+import wishlistRoutes from './routes/deseos.routes.js';
+import reviewRoutes from './routes/resenia.routes.js';
+import userRoutes from './routes/usuario.routes.js';
+import vendorRoutes from './routes/vendedor.routes.js';
+import adminRoutes from './routes/admin.routes.js';
 
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/locations', locationRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/cart', cartRoutes);
+app.use('/api/wishlist', wishlistRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/user', userRoutes);
+app.use('/api/vendor', vendorRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Base Route
 app.get('/', (req, res) => {

@@ -11,7 +11,15 @@ export const defineResenia = (sequelize, DataTypes) => {
         },
         idUsuario: {
             type: DataTypes.INTEGER,
-            allowNull: false,
+            allowNull: true,
+        },
+        nombre_invitado: {
+            type: DataTypes.STRING(100),
+            allowNull: true,
+        },
+        email_invitado: { // Optional, for verification if needed later
+            type: DataTypes.STRING(100),
+            allowNull: true,
         },
         calificacion: {
             type: DataTypes.TINYINT.UNSIGNED,

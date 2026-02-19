@@ -91,3 +91,23 @@ export const getOrderById = async (req, res) => {
         res.status(500).json({ message: 'Server Error' });
     }
 };
+
+export const trackOrder = async (req, res) => {
+    try {
+        const { codigo } = req.params;
+        const orden = await Orden.findOne({
+            where: { codigo_orden: codigo },
+            include: [{
+                model: OrdenItem,
+                include: [{ model: Producto, attributes: ['nombre', 'imagen_principal'] }]
+            }]
+        });
+
+        if (!orden) return res.status(404).json({ message: 'Pedido no encontrado' });
+
+        res.json(orden);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error al rastrear pedido' });
+    }
+};

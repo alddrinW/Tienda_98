@@ -19,6 +19,22 @@ export const verifyToken = (req, res, next) => {
     }
 };
 
+export const verifyAdmin = (req, res, next) => {
+    if (req.user && (req.user.rol === 'admin' || req.user.es_admin === true)) {
+        next();
+    } else {
+        res.status(403).json({ message: 'Admin access required' });
+    }
+};
+
+export const verifyVendedor = (req, res, next) => {
+    if (req.user && (req.user.rol === 'vendedor' || req.user.rol === 'admin')) {
+        next();
+    } else {
+        res.status(403).json({ message: 'Vendor access required' });
+    }
+};
+
 export const verifyTokenOptional = (req, res, next) => {
     const token = req.headers['authorization'];
 

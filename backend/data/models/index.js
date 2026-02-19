@@ -17,6 +17,8 @@ import { defineCarrito } from './Carrito.js';
 import { defineCarritoItem } from './CarritoItem.js';
 import { defineOrden } from './Orden.js'; // New
 import { defineOrdenItem } from './OrdenItem.js'; // New
+import { defineDeseos } from './Deseos.js'; // New
+import { defineReseniaVendedor } from './ReseniaVendedor.js'; // New
 
 // Definir todos los modelos
 const models = {
@@ -34,6 +36,8 @@ const models = {
     CarritoItem: defineCarritoItem(sequelize, DataTypes),
     Orden: defineOrden(sequelize, DataTypes),
     OrdenItem: defineOrdenItem(sequelize, DataTypes),
+    Deseos: defineDeseos(sequelize, DataTypes),
+    ReseniaVendedor: defineReseniaVendedor(sequelize, DataTypes),
 };
 
 // Asociaciones
@@ -46,7 +50,8 @@ Object.keys(models).forEach(modelName => {
 export const {
     Categoria, Provincia, Ciudad, Usuario, Vendedor,
     Direccion, Producto, ProductoVariante, ProductoTag, 
-    Resenia, Carrito, CarritoItem, Orden, OrdenItem
+    Resenia, Carrito, CarritoItem, Orden, OrdenItem,
+    Deseos, ReseniaVendedor
 } = models;
 
 export default models;

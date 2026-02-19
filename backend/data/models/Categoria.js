@@ -9,6 +9,15 @@ export const defineCategoria = (sequelize, DataTypes) => {
             type: DataTypes.STRING(200),
             allowNull: false,
         },
+        slug: {
+            type: DataTypes.STRING(255),
+            unique: true,
+            allowNull: false,
+        },
+        icono_url: {
+            type: DataTypes.STRING(255),
+            allowNull: true,
+        },
         idSubCategoria: {
             type: DataTypes.INTEGER,
             allowNull: true,

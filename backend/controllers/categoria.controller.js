@@ -6,7 +6,7 @@ export const getCategorias = async (req, res) => {
             attributes: ['idCategoria', 'nombre', 'slug', 'icono_url'],
             include: [{ 
                 model: Categoria, 
-                as: 'subcategorias', // Ensure alias matches association if defined, or use default behavior
+                as: 'Subcategorias', 
                 required: false
             }]
         });

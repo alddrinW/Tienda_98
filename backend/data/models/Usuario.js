@@ -39,9 +39,17 @@ export const defineUsuario = (sequelize, DataTypes) => {
             type: DataTypes.BOOLEAN,
             defaultValue: true,
         },
-        es_admin: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false,
+        rol: {
+            type: DataTypes.ENUM('cliente', 'vendedor', 'admin'),
+            defaultValue: 'cliente',
+        },
+        ruc_cedula: {
+            type: DataTypes.STRING(20),
+            allowNull: true,
+        },
+        razon_social: {
+            type: DataTypes.STRING(150),
+            allowNull: true,
         },
     }, {
         tableName: 'usuario',

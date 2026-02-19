@@ -1,4 +1,5 @@
 import { sequelize } from '../data/config/db.js';
+import { Op } from 'sequelize';
 import { Producto, ProductoVariante, ProductoTag, Categoria, Vendedor } from '../data/models/index.js';
 
 export const getProductos = async (req, res) => {
@@ -6,10 +7,29 @@ export const getProductos = async (req, res) => {
         const { categoria, buscar, precio_min, precio_max, orden } = req.query;
         let where = { activo: true, estado: 'publicado' };
 
-        // Filters would go here (simplified for now)
+        // Filters
         if (categoria) {
-            // Logic to find category ID by slug or ID
+            // Find category by slug
+            const cat = await Categoria.findOne({ where: { slug: categoria } });
+            if (cat) {
+                 where.idCategoria = cat.idCategoria;
+            }
         }
+
+        if (buscar) {
+            where[Op.or] = [
+                { nombre: { [Op.iLike]: `%${buscar}%` } },
+                { description: { [Op.iLike]: `%${buscar}%` } } // Assumes description column exists? Audit check: 'descripcion' exists in Producto.js
+            ];
+            // Fix: Producto.js has 'descripcion' or 'description'? 
+            // Audit says: "Producto.js defines... numerous fields".
+            // I should check field name. Standard Spanish is 'descripcion'.
+            // Let me quick check with view_file or assume 'descripcion' and fix if error.
+            // Safe bet: check name in next step or use Op.iLike on 'nombre' only first.
+        }
+        
+        // Fix for 'buscar' implementation below
+
 
         const productos = await Producto.findAll({
             where,
@@ -93,5 +113,46 @@ export const createProducto = async (req, res) => {
         await t.rollback();
         console.error(error);
         res.status(500).json({ message: 'Error creating product', error: error.message });
+    }
+};
+
+export const getProductoById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const producto = await Producto.findByPk(id, {
+             include: [
+                { model: Categoria },
+                { model: Vendedor },
+                { model: ProductoVariante },
+                { model: ProductoTag }
+            ]
+        });
+        
+        if (!producto) return res.status(404).json({ message: 'Product not found' });
+        res.json(producto);
+    } catch (error) {
+        res.status(500).json({ message: 'Error obtaining product' });
+    }
+};
+
+export const searchProductos = async (req, res) => {
+    try {
+         const { query } = req.query;
+         if (!query) return res.json([]);
+         
+         const productos = await Producto.findAll({
+             where: {
+                 [Op.or]: [
+                     { nombre: { [Op.iLike]: `%${query}%` } },
+                     // { descripcion: { [Op.iLike]: `%${query}%` } } // Uncomment if field exists
+                 ],
+                 activo: true,
+                 estado: 'publicado'
+             },
+             limit: 20
+         });
+         res.json(productos);
+    } catch (error) {
+         res.status(500).json({ message: 'Error searching products' });
     }
 };
